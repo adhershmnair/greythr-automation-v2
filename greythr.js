@@ -8,8 +8,9 @@ const BASE_URL = process.env.URL;
 const holidays = JSON.parse(fs.readFileSync("holidays.json")).holidays;
 
 // Current date in IST (format YYYY-MM-DD)
-const todayIST = new Date().toLocaleDateString("en-CA", {
+const todayIST = new Date().toLocaleDateString("en-GB", {
     timeZone: "Asia/Kolkata",
+    hour: "numeric", minute: "numeric", hour12: false
 });
 
 if (holidays.includes(todayIST)) {
