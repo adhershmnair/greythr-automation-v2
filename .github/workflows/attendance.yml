@@ -4,7 +4,7 @@ on:
   schedule:
     # GitHub cron uses UTC; convert IST→UTC (8:00am IST = 2:30 UTC, 6:00pm IST = 12:30 UTC)
     - cron: "00 8 * * 1-5"   # 08:00 AM IST, Mon-Fri
-    - cron: "03 8 * * 1-5"  # 06:00 PM IST, Mon-Fri
+    - cron: "04 8 * * 1-5"  # 06:00 PM IST, Mon-Fri
   workflow_dispatch:         # Allow manual trigger if needed
 
 jobs:
