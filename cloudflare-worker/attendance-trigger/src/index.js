@@ -17,7 +17,7 @@ export default {
 		return new Response("Hello Adharsh!");
 	},
 	async scheduled(event, env, ctx) {
-		let action = null;
+		let action = "signout"; // default
 
 		// Match cron schedules (UTC times)
 		if (event.cron === "30 2 * * 1-5") {
@@ -36,6 +36,7 @@ export default {
 		const response = await fetch(url, {
 			method: "POST",
 			headers: {
+				"Content-Type": "application/json",
 				"Accept": "application/vnd.github+json",
 				"Authorization": `Bearer ${env.GH_TOKEN}`
 			},
