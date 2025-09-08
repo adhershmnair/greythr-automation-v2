@@ -6,7 +6,14 @@ on:
     - cron: "15 2 * * 1-5"   # 07:45 AM IST, Mon-Fri
     - cron: "30 12 * * 1-5"  # 06:00 PM IST, Mon-Fri
   workflow_dispatch:         # Allow manual trigger if needed
-
+    inputs:
+      action:
+        description: 'Attendance action'
+        required: true
+        type: choice
+        options:
+          - signin
+          - signout
 jobs:
   attendance:
     runs-on: ubuntu-latest
@@ -29,14 +36,27 @@ jobs:
       # Determine action based on schedule time
       - name: Run Attendance Script
         run: |
-          if [[ "${{ github.event.schedule }}" == "15 2 * * 1-5" ]]; then
-            echo "Running morning signin..."
-            node greythr.js signin
-          elif [[ "${{ github.event.schedule }}" == "30 12 * * 1-5" ]]; then
-            echo "Running evening signout..."
-            node greythr.js signout
+          if [ -n "${{ github.event.schedule }}" ]; then
+            # Scheduled job
+            if [[ "${{ github.event.schedule }}" == "15 2 * * 1-5" ]]; then
+              echo "Running morning signin (scheduled)..."
+              node greythr.js signin
+            elif [[ "${{ github.event.schedule }}" == "30 12 * * 1-5" ]]; then
+              echo "Running evening signout (scheduled)..."
+              node greythr.js signout
+            else
+              echo "Unknown schedule string: ${{ github.event.schedule }}"
+              node greythr.js signin
+            fi
+
+          elif [ -n "${{ github.event.inputs.action }}" ]; then
+            # Manual/API dispatch with input
+            echo "Running ${{ github.event.inputs.action }} (workflow_dispatch)..."
+            node greythr.js ${{ github.event.inputs.action }}
+
           else
-            echo "Manual run or unknown trigger → default to signin"
+            # Fallback (manual run in Actions tab without inputs)
+            echo "No schedule or input provided, defaulting to signin"
             node greythr.js signin
           fi
         env:

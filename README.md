@@ -83,17 +83,55 @@ GTRY_PASSWORD = your_password
 
 The workflow `.github/workflows/attendance.yml` is configured to:
 
-- Run every weekday at:
-    ⏰ 08:00 AM IST → `signin`
-    ⏰ 06:00 PM IST → `signout`
-- Skip on holidays (listed in `holidays.json`)
-- Can also be triggered manually from the Actions tab
+- Can be triggered on demand (`workflow_dispatch`)
+- Will also be triggered by a Cloudflare Worker cron (see below)
+- Skips on holidays (`holidays.json`)
+- Runs Playwright to Sign In / Sign Out
+
+⚠️ Note: Originally this project used GitHub’s built‑in cron scheduler (`on.schedule`).
+GitHub’s cron can be delayed up to 10 minutes. To achieve precise 08:00 / 18:00 triggers, this repo now uses Cloudflare Workers cron instead.
 
 Cron expressions (UTC):
 ```
 30 2 * * 1-5   # 08:00 AM IST (Mon-Fri)
 30 12 * * 1-5  # 06:00 PM IST (Mon-Fri)
 ```
+
+---
+
+## 🌐 Cloudflare Worker Integration (Exact Scheduling)
+
+To avoid GitHub cron delays, we deploy a Cloudflare Worker that triggers this GitHub Action at the exact scheduled time.
+
+### Worker Setup
+
+- Install Wrangler:
+
+```bash
+npm install -g wrangler
+```
+
+- Init Worker: Choose Scheduled Worker (Cron Trigger) at prompts.
+
+```bash
+mkdir cloudflare-worker
+cd cloudflare-worker
+wrangler init attendance-trigger
+```
+
+- Add secrets
+
+```bash
+wrangler secret put GH_TOKEN   # GitHub PAT (repo + workflow perms)
+wrangler secret put GH_REPO    # adhershmnair/greythr-automation-v2
+```
+
+- Deploy Worker:
+
+```bash
+wrangler deploy
+```
+
 
 ---
 
