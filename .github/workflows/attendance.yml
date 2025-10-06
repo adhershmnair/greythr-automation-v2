@@ -3,8 +3,8 @@ name: Attendance Automation
 on:
   schedule:
     # GitHub cron uses UTC; convert IST→UTC (8:00am IST = 2:30 UTC, 6:00pm IST = 12:30 UTC)
-    - cron: "15 2 * * 1-5"   # 07:45 AM IST, Mon-Fri
-    - cron: "30 12 * * 1-5"  # 06:00 PM IST, Mon-Fri
+    - cron: "15 1 * * 1-5"   # 06:45 AM IST, Mon-Fri
+    - cron: "30 11 * * 1-5"  # 05:00 PM IST, Mon-Fri
   workflow_dispatch:         # Allow manual trigger if needed
     inputs:
       action:
@@ -38,10 +38,10 @@ jobs:
         run: |
           if [ -n "${{ github.event.schedule }}" ]; then
             # Scheduled job
-            if [[ "${{ github.event.schedule }}" == "15 2 * * 1-5" ]]; then
+            if [[ "${{ github.event.schedule }}" == "15 1 * * 1-5" ]]; then
               echo "Running morning signin (scheduled)..."
               node greythr.js signin
-            elif [[ "${{ github.event.schedule }}" == "30 12 * * 1-5" ]]; then
+            elif [[ "${{ github.event.schedule }}" == "30 11 * * 1-5" ]]; then
               echo "Running evening signout (scheduled)..."
               node greythr.js signout
             else
