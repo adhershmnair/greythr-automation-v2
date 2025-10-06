@@ -1,6 +1,6 @@
 # 🚀 Greythr Attendance Automation
 
-This project automatically handles **Sign In** (8:00 AM IST) and **Sign Out** (6:00 PM IST) for your company’s attendance system using [Playwright](https://playwright.dev/).  
+This project automatically handles **Sign In** and **Sign Out** for your company’s attendance system using [Playwright](https://playwright.dev/).  
 It runs on **GitHub Actions** every weekday, checks for holidays, and clicks the right attendance button so you don’t have to. 🎯
 
 ---
@@ -89,49 +89,13 @@ The workflow `.github/workflows/attendance.yml` is configured to:
 - Runs Playwright to Sign In / Sign Out
 
 ⚠️ Note: Originally this project used GitHub’s built‑in cron scheduler (`on.schedule`).
-GitHub’s cron can be delayed up to 10 minutes. To achieve precise 08:00 / 18:00 triggers, this repo now uses Cloudflare Workers cron instead.
+GitHub’s cron can be delayed up to 10 minutes. To achieve precise 08:00 / 18:00 triggers, this repo can use Cloudflare Workers cron instead.
 
 Cron expressions (UTC):
 ```
 30 2 * * 1-5   # 08:00 AM IST (Mon-Fri)
 30 12 * * 1-5  # 06:00 PM IST (Mon-Fri)
 ```
-
----
-
-## 🌐 Cloudflare Worker Integration (Exact Scheduling)
-
-To avoid GitHub cron delays, we deploy a Cloudflare Worker that triggers this GitHub Action at the exact scheduled time.
-
-### Worker Setup
-
-- Install Wrangler:
-
-```bash
-npm install -g wrangler
-```
-
-- Init Worker: Choose Scheduled Worker (Cron Trigger) at prompts.
-
-```bash
-mkdir cloudflare-worker
-cd cloudflare-worker
-wrangler init attendance-trigger
-```
-
-- Add secrets
-
-```bash
-wrangler secret put GH_TOKEN   # GitHub PAT (repo + workflow perms)
-wrangler secret put GH_REPO    # adhershmnair/greythr-automation-v2
-```
-
-- Deploy Worker:
-
-```bash
-wrangler deploy
-```
-
 
 ---
 
